@@ -11,21 +11,17 @@ function searchCitiesResults() {
                 return;
             }
 
-            // ✅ لو كتب temples
             if (input === "temples") {
                 displayResults(data.temples);
                 return;
             }
 
-            // ✅ لو كتب beaches
             if (input === "beaches") {
                 displayResults(data.beaches);
                 return;
             }
 
-            // ✅ لو كتب countries
             if (input === "countries") {
-                // نعرض كل المدن داخل الدول
                 let allCities = [];
                 data.countries.forEach(country => {
                     allCities.push(...country.cities);
@@ -34,15 +30,20 @@ function searchCitiesResults() {
                 return;
             }
 
-            // ❗ لو كتب شيء ثاني (اسم مدينة مثلاً)
             let results = [];
 
             const keyword = input.toLowerCase();
 
             for (const section in data) {
                 data[section].forEach(item => {
+                    console.log(Object.values(item.name).includes(keyword));
+                    if (Object.values(item).some(value =>
+                            String(value).toLowerCase().includes(keyword.toLowerCase())
+                        )
+                        ) {
+                        results.push(item);
+                        }
 
-                    // لو العنصر فيه مدن (مثل الدول)
                     if (item.cities) {
                         item.cities.forEach(city => {
                             if (
@@ -53,8 +54,6 @@ function searchCitiesResults() {
                             }
                         });
                     }
-
-                    // لو العنصر نفسه فيه اسم ووصف (temples / beaches)
                 });
             }
 
@@ -70,11 +69,9 @@ function searchCitiesResults() {
 }
 
 
-// زر البحث
 document.querySelector(".search-box button")
     .addEventListener("click", searchCitiesResults);
 
-// زر المسح
 document.querySelector(".search-box .clear")
     .addEventListener("click", () => {
         document.getElementById("input").value = "";
@@ -82,7 +79,6 @@ document.querySelector(".search-box .clear")
     });
 
 
-// عرض النتائج
 function displayResults(results) {
     const container = document.querySelector(".rightHolder");
 
@@ -98,4 +94,15 @@ function displayResults(results) {
 
         container.appendChild(card);
     });
+}
+
+let xhr = new XMLHttpRequest();
+xhr.open("GET", "./travel_recommendation_api.json", true);
+xhr.send();
+xhr.onreadystatechange = function() {
+    if (this.readyState === 4 && this.status === 200) {
+        console.log("travel_recommendation_api.json loaded successfully.");
+        console.log(xhr.responseText);
+        
+    }
 }
